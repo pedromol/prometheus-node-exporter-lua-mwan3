@@ -1,14 +1,7 @@
 ut = require "luci.util"
 
-local function fromBool(b)
-   if b == true then
-      return 1
-   end
-   return 0
-end
-
-local function isOnline(s)
-   if s == 'online' then
+local function assert(b, expected)
+   if b == expected then
       return 1
    end
    return 0
@@ -24,10 +17,10 @@ local function scrape()
       local status = metric("node_mwan3_interface_status", "gauge")
 
       for k,v in pairs(state.interfaces) do
-         enabled({interface=k}, fromBool(v.enabled))
-         up({interface=k}, fromBool(v.up))
-         running({interface=k}, fromBool(v.running))
-         status({interface=k}, isOnline(v.status))
+         enabled({interface=k}, assert(v.enabled, true))
+         up({interface=k}, assert(v.up, true))
+         running({interface=k}, assert(v.running, true))
+         status({interface=k}, assert(v.status, "online"))
       end
    end
 end
